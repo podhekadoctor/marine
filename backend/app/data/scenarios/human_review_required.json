@@ -1,0 +1,25 @@
+{
+  "scenario_id": "human_review_required",
+  "name": "Low Confidence Incomplete Sensor Sweep",
+  "zone_id": "zone-bay-17",
+  "satellite_telemetry": {
+    "surface_chlorophyll_a": null,
+    "baseline_chlorophyll_a": 1.8,
+    "sea_surface_temp_celsius": null,
+    "baseline_temp_celsius": 26.2,
+    "turbidity_ntu": null,
+    "spatial_cluster_detected": false,
+    "cloud_cover_percent": 94.0
+  },
+  "buoy_telemetry": {
+    "buoy_id": "buoy-b17-01",
+    "timestamp": "2026-09-24T06:00:00Z",
+    "temperature": 26.4,
+    "dissolved_oxygen_mg_l": null,
+    "ph": null,
+    "salinity_psu": 34.5,
+    "chlorophyll_fluorescence": null,
+    "turbidity_ntu": null
+  },
+  "ground_truth_context": "Cloud obstruction over 90% eliminates optical verification, while dissolved oxygen probe failed to report. Agent confidence falls below 50% threshold."
+}

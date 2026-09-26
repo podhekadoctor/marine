@@ -1,0 +1,25 @@
+{
+  "scenario_id": "normal_baseline",
+  "name": "Pelagic Deep Baseline Nominal",
+  "zone_id": "zone-trench-beta",
+  "satellite_telemetry": {
+    "surface_chlorophyll_a": 0.42,
+    "baseline_chlorophyll_a": 0.40,
+    "sea_surface_temp_celsius": 24.6,
+    "baseline_temp_celsius": 24.5,
+    "turbidity_ntu": 1.2,
+    "spatial_cluster_detected": false,
+    "cloud_cover_percent": 12.0
+  },
+  "buoy_telemetry": {
+    "buoy_id": "buoy-tb-01",
+    "timestamp": "2026-09-24T06:00:00Z",
+    "temperature": 24.5,
+    "dissolved_oxygen_mg_l": 7.8,
+    "ph": 8.2,
+    "salinity_psu": 35.0,
+    "chlorophyll_fluorescence": 0.4,
+    "turbidity_ntu": 1.1
+  },
+  "ground_truth_context": "All chemical and spectral indicators operate strictly within 1 standard deviation of historical mean."
+}

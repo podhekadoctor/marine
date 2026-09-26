@@ -1,0 +1,41 @@
+[
+  {
+    "id": "zone-bay-17",
+    "name": "Bay-17 Aquaculture Sector",
+    "region": "Northern Coastal Belt",
+    "coordinates": [17.45, 83.25],
+    "bounding_box": [[17.40, 83.20], [17.50, 83.30]],
+    "primary_risk": "Harmful Algal Bloom",
+    "depth_meters": 32.0,
+    "baseline_chl_a": 1.8,
+    "baseline_sst_celsius": 26.2,
+    "baseline_do_mg_l": 6.9,
+    "description": "Dense shellfish and finfish aquaculture corridor. Highly susceptible to coastal runoff and summer thermal stratification."
+  },
+  {
+    "id": "zone-south-shelf",
+    "name": "South Coast Fishery Sector 4",
+    "region": "Southern Shelf",
+    "coordinates": [16.85, 82.80],
+    "bounding_box": [[16.80, 82.75], [16.90, 82.85]],
+    "primary_risk": "Hypoxic Deoxygenation",
+    "depth_meters": 54.0,
+    "baseline_chl_a": 1.2,
+    "baseline_sst_celsius": 25.8,
+    "baseline_do_mg_l": 7.2,
+    "description": "High-volume artisanal trawling zone bordering seasonal upwelling boundaries."
+  },
+  {
+    "id": "zone-trench-beta",
+    "name": "Deep Marine Trench Area B",
+    "region": "Pelagic Offshore",
+    "coordinates": [16.20, 84.10],
+    "bounding_box": [[16.10, 84.00], [16.30, 84.20]],
+    "primary_risk": "Thermal Anomaly",
+    "depth_meters": 420.0,
+    "baseline_chl_a": 0.4,
+    "baseline_sst_celsius": 24.5,
+    "baseline_do_mg_l": 7.8,
+    "description": "Deep pelagic zone characterized by high current stability and low anthropogenic nutrient loading."
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "scenario_id": "conflicting_evidence",
+  "name": "Bay-17 Emerging Discrepancy",
+  "zone_id": "zone-bay-17",
+  "satellite_telemetry": {
+    "surface_chlorophyll_a": 4.6,
+    "baseline_chlorophyll_a": 1.8,
+    "sea_surface_temp_celsius": 28.3,
+    "baseline_temp_celsius": 26.2,
+    "turbidity_ntu": 14.8,
+    "spatial_cluster_detected": true,
+    "cloud_cover_percent": 8.0
+  },
+  "buoy_telemetry": {
+    "buoy_id": "buoy-b17-01",
+    "timestamp": "2026-09-24T06:00:00Z",
+    "temperature": 27.1,
+    "dissolved_oxygen_mg_l": 6.8,
+    "ph": 8.1,
+    "salinity_psu": 34.2,
+    "chlorophyll_fluorescence": 2.1,
+    "turbidity_ntu": 4.1
+  },
+  "ground_truth_context": "Surface optical bloom confirmed by Sentinel/MODIS, but localized subsurface deoxygenation has not yet reached the bottom sensor array. Arbitrator must identify this temporal lag rather than dismissing either data source."
+}

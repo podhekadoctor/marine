@@ -1,0 +1,25 @@
+{
+  "scenario_id": "confirmed_hab",
+  "name": "South Coast Acute Bloom & Deoxygenation",
+  "zone_id": "zone-south-shelf",
+  "satellite_telemetry": {
+    "surface_chlorophyll_a": 9.8,
+    "baseline_chlorophyll_a": 1.2,
+    "sea_surface_temp_celsius": 29.5,
+    "baseline_temp_celsius": 25.8,
+    "turbidity_ntu": 32.5,
+    "spatial_cluster_detected": true,
+    "cloud_cover_percent": 4.0
+  },
+  "buoy_telemetry": {
+    "buoy_id": "buoy-ss-04",
+    "timestamp": "2026-09-24T06:00:00Z",
+    "temperature": 29.1,
+    "dissolved_oxygen_mg_l": 2.1,
+    "ph": 7.4,
+    "salinity_psu": 33.1,
+    "chlorophyll_fluorescence": 8.9,
+    "turbidity_ntu": 28.0
+  },
+  "ground_truth_context": "Full convergent crisis: severe hypoxia, massive chlorophyll concentration, and extreme thermal anomaly."
+}
