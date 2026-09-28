@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Rectangle, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Zone } from '../types/api';
+import { Compass, Radio } from 'lucide-react';
 
 interface MarineMapProps {
   zones: Zone[];
@@ -9,87 +10,150 @@ interface MarineMapProps {
   onSelectZone: (zone: Zone) => void;
 }
 
-// Forces Leaflet to recalculate its viewport dimensions inside CSS grid
 function MapResizeHandler() {
   const map = useMap();
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       map.invalidateSize();
     }, 250);
+    return () => clearTimeout(timer);
   }, [map]);
   return null;
 }
 
-// Pans map smoothly when a zone is selected
-function MapRecenter({ center }: { center: [number, number] }) {
+function MapRecenter({ coords }: { coords: [number, number] }) {
   const map = useMap();
   useEffect(() => {
-    map.flyTo(center, 8, { duration: 1.2 });
-  }, [center, map]);
+    map.panTo(coords, { animate: true, duration: 0.8 });
+  }, [coords, map]);
   return null;
 }
 
-export const MarineMap: React.FC<MarineMapProps> = ({ zones, selectedZone, onSelectZone }) => {
-  const defaultCenter: [number, number] = selectedZone
-    ? selectedZone.coordinates
-    : [17.15, 83.40];
+export const MarineMap: React.FC<MarineMapProps> = ({
+  zones,
+  selectedZone,
+  onSelectZone,
+}) => {
+  const defaultCenter: [number, number] = [27.7, -97.1];
 
   return (
-    <div className="w-full h-full relative overflow-hidden bg-slate-950">
-      <MapContainer
-        center={defaultCenter}
-        zoom={7}
-        scrollWheelZoom={true}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <MapResizeHandler />
-        {selectedZone && <MapRecenter center={selectedZone.coordinates} />}
+    <div className="relative w-full h-full min-h-[440px] bg-[var(--abyss)] border border-[#123a45] rounded-2xl overflow-hidden flex flex-col">
+      {/* Map header */}
+      <div className="bg-[var(--deep)]/90 backdrop-blur-sm border-b border-[#123a45] px-3 py-2 flex items-center justify-between z-[400] text-xs">
+        <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+          <Compass className="w-3.5 h-3.5 text-[var(--current)]" />
+          <span className="text-[11px] font-medium">
+            Survey map
+          </span>
+          <span className="text-[var(--text-dim)]">·</span>
+          <span className="font-mono text-[var(--text-secondary)] text-[11px]">
+            {selectedZone
+              ? `${selectedZone.coordinates[0].toFixed(4)}°N, ${Math.abs(selectedZone.coordinates[1]).toFixed(4)}°W`
+              : "27.7000°N, 97.1000°W"}
+          </span>
+        </div>
+        <div className="flex items-center gap-3 font-mono text-[11px]">
+          <span className="text-[var(--text-secondary)] flex items-center gap-1.5">
+            <Radio className="w-3 h-3 text-[var(--kelp)]" />
+            {zones.length} buoys active
+          </span>
+        </div>
+      </div>
 
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+      {/* Interactive map viewport */}
+      <div className="relative flex-1 w-full h-full">
+        <MapContainer
+          center={defaultCenter}
+          zoom={9}
+          scrollWheelZoom={true}
+          className="w-full h-full"
+        >
+          <MapResizeHandler />
+          {selectedZone && <MapRecenter coords={selectedZone.coordinates} />}
 
-        {zones.map((z) => {
-          const isSelected = selectedZone?.id === z.id;
-          return (
-            <React.Fragment key={z.id}>
-              <Rectangle
-                bounds={z.bounding_box}
-                pathOptions={{
-                  color: isSelected ? '#0d9488' : '#38bdf8',
-                  weight: isSelected ? 3 : 1.5,
-                  fillOpacity: isSelected ? 0.35 : 0.15,
-                }}
-                eventHandlers={{ click: () => onSelectZone(z) }}
-              />
-              <CircleMarker
-                center={z.coordinates}
-                radius={isSelected ? 9 : 6}
-                pathOptions={{
-                  color: isSelected ? '#14b8a6' : '#0284c7',
-                  fillColor: isSelected ? '#2dd4bf' : '#38bdf8',
-                  fillOpacity: 0.9,
-                  weight: 2,
-                }}
-                eventHandlers={{ click: () => onSelectZone(z) }}
-              >
-                <Popup>
-                  <div className="text-slate-900 font-sans p-1">
-                    <p className="text-[10px] uppercase font-mono text-slate-500">{z.region}</p>
-                    <p className="font-bold text-xs">{z.name}</p>
-                    <p className="text-[11px] text-slate-700 mt-1">Depth: {z.depth_meters}m</p>
-                    <p className="text-[11px] text-slate-700">Primary Risk: {z.primary_risk}</p>
-                  </div>
-                </Popup>
-              </CircleMarker>
-            </React.Fragment>
-          );
-        })}
-      </MapContainer>
+          <TileLayer
+            attribution='Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
+          />
 
-      <div className="absolute top-3 right-3 z-[400] bg-slate-900/90 border border-slate-800 px-3 py-1.5 text-[11px] font-mono text-teal-300 backdrop-blur pointer-events-none">
-        SURFACE RADAR: ACTIVE | TELEMETRY STREAM ONLINE
+          {zones.map((zone) => {
+            const isSelected = selectedZone?.id === zone.id;
+
+            return (
+              <React.Fragment key={zone.id}>
+                {/* Sector bounding area */}
+                <Rectangle
+                  bounds={zone.bounding_box}
+                  pathOptions={{
+                    color: isSelected ? '#1f8fa3' : '#1e4a54',
+                    weight: isSelected ? 1.5 : 1,
+                    dashArray: isSelected ? '4, 4' : '2, 3',
+                    fillColor: isSelected ? '#15697a' : '#0f4552',
+                    fillOpacity: isSelected ? 0.22 : 0.1,
+                  }}
+                  eventHandlers={{
+                    click: () => onSelectZone(zone),
+                  }}
+                />
+
+                {/* Buoy sensor marker */}
+                <CircleMarker
+                  center={zone.coordinates}
+                  radius={isSelected ? 7 : 5}
+                  pathOptions={{
+                    color: isSelected ? '#f2f8f6' : '#2d7d94',
+                    fillColor: isSelected ? '#1f8fa3' : '#15697a',
+                    fillOpacity: 1,
+                    weight: isSelected ? 2 : 1.5,
+                  }}
+                  eventHandlers={{
+                    click: () => onSelectZone(zone),
+                  }}
+                >
+                  <Popup>
+                    <div className="text-xs text-[var(--sea-mist)] space-y-1.5 min-w-[210px]">
+                      <div className="flex items-center justify-between border-b border-[#1e4a54] pb-1">
+                        <span className="font-semibold text-[var(--foam)] tracking-wide">{zone.name}</span>
+                        <span className="font-mono text-[10px] text-[var(--current)]">{zone.id}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] pt-0.5">
+                        <span className="text-[var(--text-secondary)]">Station depth:</span>
+                        <span className="font-mono text-right text-[var(--foam)]">{zone.depth_meters} m</span>
+                        <span className="text-[var(--text-secondary)]">Baseline temp.:</span>
+                        <span className="font-mono text-right text-[var(--foam)]">{zone.baseline_sst_celsius}°C</span>
+                        <span className="text-[var(--text-secondary)]">Baseline oxygen:</span>
+                        <span className="font-mono text-right text-[var(--foam)]">{zone.baseline_do_mg_l} mg/L</span>
+                        <span className="text-[var(--text-secondary)]">Baseline chl-a:</span>
+                        <span className="font-mono text-right text-[var(--foam)]">{zone.baseline_chl_a} mg/m³</span>
+                        <span className="text-[var(--text-secondary)]">Watching for:</span>
+                        <span className="font-mono text-right text-[var(--sand)] capitalize">{zone.primary_risk}</span>
+                      </div>
+                    </div>
+                  </Popup>
+                </CircleMarker>
+              </React.Fragment>
+            );
+          })}
+        </MapContainer>
+
+        {/* Legend */}
+        <div className="absolute bottom-3 left-3 z-[400] bg-[var(--deep)]/95 border border-[#1e4a54] p-2.5 rounded-xl text-[11px] space-y-1.5 shadow-lg backdrop-blur-sm pointer-events-auto">
+          <div className="font-medium text-[var(--text-secondary)] text-[10px] pb-1 border-b border-[#153e48]">
+            Map key
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--current)] border border-white inline-block"></span>
+            <span className="text-[var(--sea-mist)]">Selected station</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--surface-water)] border border-[#2d7d94] inline-block"></span>
+            <span className="text-[var(--text-secondary)]">Buoy station</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3.5 h-2 border border-dashed border-[var(--current)] bg-[var(--surface-water)]/30 inline-block"></span>
+            <span className="text-[var(--text-secondary)]">Survey area</span>
+          </div>
+        </div>
       </div>
     </div>
   );
